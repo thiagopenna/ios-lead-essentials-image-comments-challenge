@@ -14,13 +14,20 @@ public class RemoteImageCommentLoader {
 	private let client: HTTPClient
 	private let baseURL: URL
 	
+	public enum Error: Swift.Error {
+		case connectivity
+		case invalidData
+	}
+	
 	public init(client: HTTPClient, baseURL: URL) {
 		self.client = client
 		self.baseURL = baseURL
 	}
 		
 	public func load(with imageId: UUID, completion: @escaping (Result) -> Void) {
-		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { _ in }
+		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { _ in
+			completion(.failure(.connectivity))
+		}
 	}
 }
 

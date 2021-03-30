@@ -38,6 +38,23 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		XCTAssertEqual(client.requestedURLs, [expectedURL, expectedURL])
 	}
 	
+	func test_load_deliversErrorOnClientError() {
+		let (sut, client) = makeSUT()
+		
+		let exp = expectation(description: "Wait for load completion")
+		sut.load(with: UUID()) { result in
+			if case let .failure(receivedError) = result {
+				XCTAssertEqual(receivedError, .connectivity)
+			} else {
+				XCTFail("Expected connectivity error, got \(result) instead")
+			}
+			exp.fulfill()
+		}
+		
+		client.complete(with: NSError(domain: "Test", code: 0))
+		wait(for: [exp], timeout: 1.0)
+	}
+	
 	// MARK: - Helpers
 	
 	private func makeSUT(baseURL: URL = URL(string: "https://base-url.com")!, file: StaticString = #filePath, line: UInt = #line) -> (sut: RemoteImageCommentLoader, client: HTTPClientSpy) {
