@@ -66,6 +66,15 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		})
 	}
 	
+	func test_load_deliversNoItemsOn200HTTPResponseWithEmptyJSONList() {
+		let (sut, client) = makeSUT()
+		
+		expect(sut, toCompleteWith: .success([]), when: {
+			let emptyListJSON = makeItemsJSON([])
+			client.complete(withStatusCode: 200, data: emptyListJSON)
+		})
+	}
+	
 	// MARK: - Helpers
 	
 	private func makeSUT(baseURL: URL = URL(string: "https://base-url.com")!, file: StaticString = #filePath, line: UInt = #line) -> (sut: RemoteImageCommentLoader, client: HTTPClientSpy) {
@@ -78,15 +87,24 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		return baseURL.appendingPathComponent("image/\(imageId)/comments")
 	}
 	
+	private func makeItemsJSON(_ items: [[String: Any]]) -> Data {
+		let json = ["items": items]
+		return try! JSONSerialization.data(withJSONObject: json)
+	}
+	
 	private func expect(_ sut: RemoteImageCommentLoader, toCompleteWith expectedResult: RemoteImageCommentLoader.Result, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
 		let exp = expectation(description: "Wait for load completion")
 		
 		sut.load(with: UUID()) { receivedResult in
-			if case let .failure(receivedError) = receivedResult,
-			   case let .failure(expectedError) = expectedResult {
-				XCTAssertEqual(receivedError, expectedError)
-			} else {
-				XCTFail("Expected \(expectedResult), got \(receivedResult) instead")
+			switch (receivedResult, expectedResult) {
+			case let (.success(receivedItems), .success(expectedItems)):
+				XCTAssertEqual(receivedItems, expectedItems, file: file, line: line)
+				
+			case let (.failure(receivedError), .failure(expectedError)):
+				XCTAssertEqual(receivedError, expectedError, file: file, line: line)
+				
+			default:
+				XCTFail("Expected result \(expectedResult) got \(receivedResult) instead", file: file, line: line)
 			}
 			exp.fulfill()
 		}

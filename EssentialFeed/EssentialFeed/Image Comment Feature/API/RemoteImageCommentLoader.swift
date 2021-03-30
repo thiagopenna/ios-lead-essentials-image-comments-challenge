@@ -27,8 +27,12 @@ public class RemoteImageCommentLoader {
 	public func load(with imageId: UUID, completion: @escaping (Result) -> Void) {
 		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { result in
 			switch result {
-			case .success:
-				completion(.failure(.invalidData))
+			case let .success((data, response)):
+				if response.isOK, let _ = try? JSONSerialization.jsonObject(with: data) {
+					completion(.success([]))
+				} else {
+					completion(.failure(.invalidData))
+				}
 			case .failure:
 				completion(.failure(.connectivity))
 			}
