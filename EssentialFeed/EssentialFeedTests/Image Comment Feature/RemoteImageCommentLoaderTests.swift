@@ -23,7 +23,7 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		
 		sut.load(with: imageId) { _ in }
 		
-		XCTAssertEqual(client.requestedURLs.first, URL(string: "https://a-given-base-url.com/image/\(imageId)/comments")!)
+		XCTAssertEqual(client.requestedURLs.first, expectedURL(for: baseURL, imageId: imageId))
 	}
 	
 	func test_loadTwice_requestsDataFromURLTwice() {
@@ -34,8 +34,7 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		sut.load(with: imageId) { _ in }
 		sut.load(with: imageId) { _ in }
 		
-		let expectedURL = URL(string: "https://a-given-base-url.com/image/\(imageId)/comments")!
-		
+		let expectedURL = self.expectedURL(for: baseURL, imageId: imageId)
 		XCTAssertEqual(client.requestedURLs, [expectedURL, expectedURL])
 	}
 	
@@ -45,6 +44,10 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		let client = HTTPClientSpy()
 		let sut = RemoteImageCommentLoader(client: client, baseURL: baseURL)
 		return (sut, client)
+	}
+	
+	private func expectedURL(for baseURL: URL, imageId: UUID) -> URL {
+		return baseURL.appendingPathComponent("image/\(imageId)/comments")
 	}
 	
 }
