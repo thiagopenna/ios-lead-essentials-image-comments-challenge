@@ -41,37 +41,18 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 	func test_load_deliversErrorOnClientError() {
 		let (sut, client) = makeSUT()
 		
-		let exp = expectation(description: "Wait for load completion")
-		sut.load(with: UUID()) { result in
-			if case let .failure(receivedError) = result {
-				XCTAssertEqual(receivedError, .connectivity)
-			} else {
-				XCTFail("Expected connectivity error, got \(result) instead")
-			}
-			exp.fulfill()
+		expect(sut, toCompleteWith: .failure(.connectivity)) {
+			client.complete(with: NSError(domain: "Test", code: 0))
 		}
-		
-		client.complete(with: NSError(domain: "Test", code: 0))
-		wait(for: [exp], timeout: 1.0)
 	}
 	
 	func test_load_deliversErrorOnNon2xxHTTPResponse() {
 		let (sut, client) = makeSUT()
-		
 		let code = 400
 		
-		let exp = expectation(description: "Wait for load completion")
-		sut.load(with: UUID()) { result in
-			if case let .failure(receivedError) = result {
-				XCTAssertEqual(receivedError, .invalidData)
-			} else {
-				XCTFail("Expected invalid data error, got \(result) instead")
-			}
-			exp.fulfill()
+		expect(sut, toCompleteWith: .failure(.invalidData)) {
+			client.complete(withStatusCode: code, data: Data())
 		}
-		
-		client.complete(withStatusCode: code, data: Data())
-		wait(for: [exp], timeout: 1.0)
 	}
 	
 	// MARK: - Helpers
@@ -86,4 +67,19 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		return baseURL.appendingPathComponent("image/\(imageId)/comments")
 	}
 	
+	private func expect(_ sut: RemoteImageCommentLoader, toCompleteWith expectedResult: RemoteImageCommentLoader.Result, when action: () -> Void, file: StaticString = #filePath, line: UInt = #line) {
+		let exp = expectation(description: "Wait for load completion")
+		
+		sut.load(with: UUID()) { receivedResult in
+			if case let .failure(receivedError) = receivedResult,
+			   case let .failure(expectedError) = expectedResult {
+				XCTAssertEqual(receivedError, expectedError)
+			} else {
+				XCTFail("Expected \(expectedResult), got \(receivedResult) instead")
+			}
+			exp.fulfill()
+		}
+		action()
+		wait(for: [exp], timeout: 1.0)
+	}
 }
