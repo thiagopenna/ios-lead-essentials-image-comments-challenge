@@ -9,9 +9,26 @@
 import Foundation
 
 public class RemoteImageCommentLoader {
-	private let client: HTTPClient
+	public typealias Result = Swift.Result<[ImageComment], Error>
 	
-	public init(client: HTTPClient) {
+	private let client: HTTPClient
+	private let baseURL: URL
+	
+	public init(client: HTTPClient, baseURL: URL) {
 		self.client = client
+		self.baseURL = baseURL
+	}
+		
+	public func load(withImageId imageId: UUID, completion: @escaping (Result) -> Void) {
+		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { _ in }
+	}
+}
+
+private extension URL {
+	func appendingImageCommentURL(for imageId: UUID) -> URL {
+		return self
+			.appendingPathComponent("image")
+			.appendingPathComponent(imageId.uuidString)
+			.appendingPathComponent("comments")
 	}
 }

@@ -7,15 +7,31 @@
 //
 
 import XCTest
-import EssentialFeed
+@testable import EssentialFeed
 
 class RemoteImageCommentLoaderTests: XCTestCase {
 
 	func test_init_doesNotRequestDataFromURL() {
-		let client = HTTPClientSpy()
-		let _ = RemoteImageCommentLoader(client: client)
-		
+		let (_, client) = makeSUT()
 		XCTAssertTrue(client.requestedURLs.isEmpty)
+	}
+	
+	func test_load_requestsDataFromURL() {
+		let baseURL = URL(string: "https://a-given-base-url.com")!
+		let imageId = UUID()
+		let (sut, client) = makeSUT(baseURL: baseURL)
+		
+		sut.load(withImageId: imageId) { _ in }
+		
+		XCTAssertEqual(client.requestedURLs.first, URL(string: "https://a-given-base-url.com/image/\(imageId)/comments")!)
+	}
+	
+	// MARK: - Helpers
+	
+	private func makeSUT(baseURL: URL = URL(string: "https://base-url.com")!, file: StaticString = #filePath, line: UInt = #line) -> (sut: RemoteImageCommentLoader, client: HTTPClientSpy) {
+		let client = HTTPClientSpy()
+		let sut = RemoteImageCommentLoader(client: client, baseURL: baseURL)
+		return (sut, client)
 	}
 	
 }
