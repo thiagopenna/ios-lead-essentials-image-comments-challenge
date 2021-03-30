@@ -48,10 +48,12 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 	
 	func test_load_deliversErrorOnNon2xxHTTPResponse() {
 		let (sut, client) = makeSUT()
-		let code = 400
+		let codes = [199, 300, 400, 500]
 		
-		expect(sut, toCompleteWith: .failure(.invalidData)) {
-			client.complete(withStatusCode: code, data: Data())
+		codes.enumerated().forEach { index, code in
+			expect(sut, toCompleteWith: .failure(.invalidData)) {
+				client.complete(withStatusCode: code, data: Data(), at: index)
+			}
 		}
 	}
 	
