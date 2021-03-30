@@ -55,6 +55,25 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		wait(for: [exp], timeout: 1.0)
 	}
 	
+	func test_load_deliversErrorOnNon2xxHTTPResponse() {
+		let (sut, client) = makeSUT()
+		
+		let code = 400
+		
+		let exp = expectation(description: "Wait for load completion")
+		sut.load(with: UUID()) { result in
+			if case let .failure(receivedError) = result {
+				XCTAssertEqual(receivedError, .invalidData)
+			} else {
+				XCTFail("Expected invalid data error, got \(result) instead")
+			}
+			exp.fulfill()
+		}
+		
+		client.complete(withStatusCode: code, data: Data())
+		wait(for: [exp], timeout: 1.0)
+	}
+	
 	// MARK: - Helpers
 	
 	private func makeSUT(baseURL: URL = URL(string: "https://base-url.com")!, file: StaticString = #filePath, line: UInt = #line) -> (sut: RemoteImageCommentLoader, client: HTTPClientSpy) {

@@ -25,8 +25,13 @@ public class RemoteImageCommentLoader {
 	}
 		
 	public func load(with imageId: UUID, completion: @escaping (Result) -> Void) {
-		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { _ in
-			completion(.failure(.connectivity))
+		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { result in
+			switch result {
+			case .success:
+				completion(.failure(.invalidData))
+			case .failure:
+				completion(.failure(.connectivity))
+			}
 		}
 	}
 }
