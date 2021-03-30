@@ -28,8 +28,10 @@ public class RemoteImageCommentLoader {
 		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { result in
 			switch result {
 			case let .success((data, response)):
-				if response.isOK, let _ = try? JSONSerialization.jsonObject(with: data) {
-					completion(.success([]))
+				let decoder = JSONDecoder()
+				decoder.dateDecodingStrategy = .iso8601
+				if response.isOK, let json = try? decoder.decode(RemoteImageCommentRootObject.self, from: data) {
+					completion(.success(json.items.toModels()))
 				} else {
 					completion(.failure(.invalidData))
 				}
@@ -37,6 +39,12 @@ public class RemoteImageCommentLoader {
 				completion(.failure(.connectivity))
 			}
 		}
+	}
+}
+
+private extension Array where Element == RemoteImageComment {
+	func toModels() -> [ImageComment] {
+		return map { ImageComment(id: $0.id, message: $0.message, creationDate: $0.createdAt, author: ImageComment.Author(username: $0.author.username)) }
 	}
 }
 

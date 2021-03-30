@@ -75,6 +75,33 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		})
 	}
 	
+	func test_load_deliversCommentsOn200HTTPResponseWithJSONItems() {
+		let (sut, client) = makeSUT()
+		
+		let comment1 = ImageComment(id: UUID(), message: "a message", creationDate: Date().discardingMilliseconds, author: ImageComment.Author(username: "an author"))
+		
+		let json1 = ["id": comment1.id.uuidString,
+					 "message": comment1.message,
+					 "created_at": comment1.creationDate.iso8601string,
+					 "author": ["username": comment1.author.username]
+		] as [String : Any]
+		
+		let comment2 = ImageComment(id: UUID(), message: "another message", creationDate: Date().discardingMilliseconds, author: ImageComment.Author(username: "another author"))
+		
+		let json2 = ["id": comment2.id.uuidString,
+					 "message": comment2.message,
+					 "created_at": comment2.creationDate.iso8601string,
+					 "author": ["username": comment2.author.username]
+		] as [String : Any]
+		
+		let items = [comment1, comment2]
+		
+		expect(sut, toCompleteWith: .success(items), when: {
+			let json = makeItemsJSON([json1, json2])
+			client.complete(withStatusCode: 200, data: json)
+		})
+	}
+	
 	// MARK: - Helpers
 	
 	private func makeSUT(baseURL: URL = URL(string: "https://base-url.com")!, file: StaticString = #filePath, line: UInt = #line) -> (sut: RemoteImageCommentLoader, client: HTTPClientSpy) {
@@ -110,5 +137,15 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		}
 		action()
 		wait(for: [exp], timeout: 1.0)
+	}
+}
+
+private extension Date {
+	var iso8601string: String {
+		return ISO8601DateFormatter().string(from: self)
+	}
+	
+	var discardingMilliseconds: Date {
+		return Date(timeIntervalSince1970: self.timeIntervalSince1970.rounded())
 	}
 }
