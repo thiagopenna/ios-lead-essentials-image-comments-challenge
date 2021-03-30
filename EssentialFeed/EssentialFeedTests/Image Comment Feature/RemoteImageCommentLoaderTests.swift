@@ -21,7 +21,7 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		let imageId = UUID()
 		let (sut, client) = makeSUT(baseURL: baseURL)
 		
-		sut.load(withImageId: imageId) { _ in }
+		sut.load(with: imageId) { _ in }
 		
 		XCTAssertEqual(client.requestedURLs.first, URL(string: "https://a-given-base-url.com/image/\(imageId)/comments")!)
 	}

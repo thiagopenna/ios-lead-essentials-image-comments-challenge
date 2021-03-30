@@ -19,7 +19,7 @@ public class RemoteImageCommentLoader {
 		self.baseURL = baseURL
 	}
 		
-	public func load(withImageId imageId: UUID, completion: @escaping (Result) -> Void) {
+	public func load(with imageId: UUID, completion: @escaping (Result) -> Void) {
 		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { _ in }
 	}
 }

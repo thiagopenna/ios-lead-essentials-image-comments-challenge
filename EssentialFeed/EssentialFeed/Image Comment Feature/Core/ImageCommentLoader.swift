@@ -11,5 +11,5 @@ import Foundation
 public protocol ImageCommentLoader {
 	typealias Result = Swift.Result<[ImageComment], Error>
 	
-	func load(withImageId id: UUID, completion: @escaping (Result) -> Void)
+	func load(with imageId: UUID, completion: @escaping (Result) -> Void)
 }
