@@ -139,13 +139,3 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		wait(for: [exp], timeout: 1.0)
 	}
 }
-
-private extension Date {
-	var iso8601string: String {
-		return ISO8601DateFormatter().string(from: self)
-	}
-	
-	var discardingMilliseconds: Date {
-		return Date(timeIntervalSince1970: self.timeIntervalSince1970.rounded())
-	}
-}
