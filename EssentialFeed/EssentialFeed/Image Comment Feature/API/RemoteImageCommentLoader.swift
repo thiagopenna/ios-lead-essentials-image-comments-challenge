@@ -25,7 +25,8 @@ public class RemoteImageCommentLoader {
 	}
 		
 	public func load(with imageId: UUID, completion: @escaping (Result) -> Void) {
-		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { result in
+		client.get(from: baseURL.appendingImageCommentURL(for: imageId)) { [weak self] result in
+			guard self != nil else { return }
 			switch result {
 			case let .success((data, response)):
 				let decoder = JSONDecoder()

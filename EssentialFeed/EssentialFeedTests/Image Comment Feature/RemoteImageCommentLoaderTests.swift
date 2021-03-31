@@ -90,11 +90,27 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		})
 	}
 	
+	func test_load_doesNotDeliverResultAfterSUTInstanceHasBeenDeallocated() {
+		let baseURL = URL(string: "http://any-url.com")!
+		let client = HTTPClientSpy()
+		var sut: RemoteImageCommentLoader? = RemoteImageCommentLoader(client: client, baseURL: baseURL)
+		
+		var capturedResults = [RemoteImageCommentLoader.Result]()
+		sut?.load(with: UUID()) { capturedResults.append($0) }
+		
+		sut = nil
+		client.complete(withStatusCode: 200, data: makeItemsJSON([]))
+		
+		XCTAssertTrue(capturedResults.isEmpty)
+	}
+	
 	// MARK: - Helpers
 	
 	private func makeSUT(baseURL: URL = URL(string: "https://base-url.com")!, file: StaticString = #filePath, line: UInt = #line) -> (sut: RemoteImageCommentLoader, client: HTTPClientSpy) {
 		let client = HTTPClientSpy()
 		let sut = RemoteImageCommentLoader(client: client, baseURL: baseURL)
+		trackForMemoryLeaks(sut, file: file, line: line)
+		trackForMemoryLeaks(client, file: file, line: line)
 		return (sut, client)
 	}
 	
