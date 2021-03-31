@@ -66,6 +66,18 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		})
 	}
 	
+	func test_load_deliversSuccessOn2xxHTTPResponseWithEmptyJSONList() {
+		let (sut, client) = makeSUT()
+		let codes = [200, 201, 204, 299]
+		
+		codes.enumerated().forEach { index, code in
+			expect(sut, toCompleteWith: .success([]), when: {
+				let emptyListJSON = makeItemsJSON([])
+				client.complete(withStatusCode: code, data: emptyListJSON, at: index)
+			})
+		}
+	}
+	
 	func test_load_deliversNoItemsOn200HTTPResponseWithEmptyJSONList() {
 		let (sut, client) = makeSUT()
 		

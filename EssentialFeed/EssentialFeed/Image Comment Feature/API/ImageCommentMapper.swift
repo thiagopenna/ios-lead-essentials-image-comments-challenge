@@ -21,7 +21,7 @@ final class ImageCommentMapper {
 
 	static func map(_ data: Data, from response: HTTPURLResponse) throws -> [RemoteImageComment] {
 		
-		guard response.isOK, let root = try? decoder.decode(Root.self, from: data) else {
+		guard response.is2xxOK, let root = try? decoder.decode(Root.self, from: data) else {
 			throw RemoteImageCommentLoader.Error.invalidData
 		}
 		
