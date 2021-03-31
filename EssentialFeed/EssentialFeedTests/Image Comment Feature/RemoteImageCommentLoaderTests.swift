@@ -78,21 +78,9 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 	func test_load_deliversCommentsOn200HTTPResponseWithJSONItems() {
 		let (sut, client) = makeSUT()
 		
-		let comment1 = ImageComment(id: UUID(), message: "a message", creationDate: Date().discardingMilliseconds, author: ImageComment.Author(username: "an author"))
+		let (comment1, json1) = makeComment(id: UUID(), message: "a message", creationDate: Date(), authorUsername: "an author")
 		
-		let json1 = ["id": comment1.id.uuidString,
-					 "message": comment1.message,
-					 "created_at": comment1.creationDate.iso8601string,
-					 "author": ["username": comment1.author.username]
-		] as [String : Any]
-		
-		let comment2 = ImageComment(id: UUID(), message: "another message", creationDate: Date().discardingMilliseconds, author: ImageComment.Author(username: "another author"))
-		
-		let json2 = ["id": comment2.id.uuidString,
-					 "message": comment2.message,
-					 "created_at": comment2.creationDate.iso8601string,
-					 "author": ["username": comment2.author.username]
-		] as [String : Any]
+		let (comment2, json2) = makeComment(id: UUID(), message: "another message", creationDate: Date(), authorUsername: "another author")
 		
 		let items = [comment1, comment2]
 		
@@ -112,6 +100,18 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 	
 	private func expectedURL(for baseURL: URL, imageId: UUID) -> URL {
 		return baseURL.appendingPathComponent("image/\(imageId)/comments")
+	}
+	
+	private func makeComment(id: UUID, message: String, creationDate: Date, authorUsername: String) -> (comment: ImageComment, json: [String: Any]) {
+		let comment = ImageComment(id: id, message: message, creationDate: creationDate.discardingMilliseconds, author: ImageComment.Author(username: authorUsername))
+		
+		let json = ["id": comment.id.uuidString,
+					 "message": comment.message,
+					 "created_at": comment.creationDate.iso8601string,
+					 "author": ["username": comment.author.username]
+		] as [String : Any]
+		
+		return (comment, json)
 	}
 	
 	private func makeItemsJSON(_ items: [[String: Any]]) -> Data {
