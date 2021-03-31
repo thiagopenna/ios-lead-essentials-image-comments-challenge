@@ -41,7 +41,7 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 	func test_load_deliversErrorOnClientError() {
 		let (sut, client) = makeSUT()
 		
-		expect(sut, toCompleteWith: .failure(.connectivity)) {
+		expect(sut, toCompleteWith: .failure(RemoteImageCommentLoader.Error.connectivity)) {
 			client.complete(with: NSError(domain: "Test", code: 0))
 		}
 	}
@@ -51,7 +51,7 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 		let codes = [199, 300, 400, 500]
 		
 		codes.enumerated().forEach { index, code in
-			expect(sut, toCompleteWith: .failure(.invalidData)) {
+			expect(sut, toCompleteWith: .failure(RemoteImageCommentLoader.Error.invalidData)) {
 				client.complete(withStatusCode: code, data: Data(), at: index)
 			}
 		}
@@ -60,7 +60,7 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 	func test_load_deliversErrorOn200HTTPResponseWithInvalidJSON() {
 		let (sut, client) = makeSUT()
 		
-		expect(sut, toCompleteWith: .failure(.invalidData), when: {
+		expect(sut, toCompleteWith: .failure(RemoteImageCommentLoader.Error.invalidData), when: {
 			let invalidJSON = Data("invalid json".utf8)
 			client.complete(withStatusCode: 200, data: invalidJSON)
 		})
@@ -143,7 +143,7 @@ class RemoteImageCommentLoaderTests: XCTestCase {
 			case let (.success(receivedItems), .success(expectedItems)):
 				XCTAssertEqual(receivedItems, expectedItems, file: file, line: line)
 				
-			case let (.failure(receivedError), .failure(expectedError)):
+			case let (.failure(receivedError as RemoteImageCommentLoader.Error), .failure(expectedError as RemoteImageCommentLoader.Error)):
 				XCTAssertEqual(receivedError, expectedError, file: file, line: line)
 				
 			default:

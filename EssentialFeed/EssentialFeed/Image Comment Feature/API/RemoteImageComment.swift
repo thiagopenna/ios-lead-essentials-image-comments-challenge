@@ -8,10 +8,6 @@
 
 import Foundation
 
-struct RemoteImageCommentRootObject: Decodable {
-	let items: [RemoteImageComment]
-}
-
 struct RemoteImageComment: Decodable {
 	let id: UUID
 	let message: String

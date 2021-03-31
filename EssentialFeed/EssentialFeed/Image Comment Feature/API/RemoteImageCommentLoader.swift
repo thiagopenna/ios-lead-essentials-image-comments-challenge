@@ -9,7 +9,7 @@
 import Foundation
 
 public class RemoteImageCommentLoader {
-	public typealias Result = Swift.Result<[ImageComment], Error>
+	public typealias Result = Swift.Result<[ImageComment], Swift.Error>
 	
 	private let client: HTTPClient
 	private let baseURL: URL
@@ -31,18 +31,17 @@ public class RemoteImageCommentLoader {
 			case let .success((data, response)):
 				completion(RemoteImageCommentLoader.map(data, from: response))
 			case .failure:
-				completion(.failure(.connectivity))
+				completion(.failure(Error.connectivity))
 			}
 		}
 	}
 	
 	private static func map(_ data: Data, from response: HTTPURLResponse) -> Result {
-		let decoder = JSONDecoder()
-		decoder.dateDecodingStrategy = .iso8601
-		if response.isOK, let json = try? decoder.decode(RemoteImageCommentRootObject.self, from: data) {
-			return .success(json.items.toModels())
-		} else {
-			return .failure(.invalidData)
+		do {
+			let comments = try ImageCommentMapper.map(data, from: response)
+			return .success(comments.toModels())
+		} catch {
+			return .failure(error)
 		}
 	}
 }
