@@ -29,16 +29,20 @@ public class RemoteImageCommentLoader {
 			guard self != nil else { return }
 			switch result {
 			case let .success((data, response)):
-				let decoder = JSONDecoder()
-				decoder.dateDecodingStrategy = .iso8601
-				if response.isOK, let json = try? decoder.decode(RemoteImageCommentRootObject.self, from: data) {
-					completion(.success(json.items.toModels()))
-				} else {
-					completion(.failure(.invalidData))
-				}
+				completion(RemoteImageCommentLoader.map(data, from: response))
 			case .failure:
 				completion(.failure(.connectivity))
 			}
+		}
+	}
+	
+	private static func map(_ data: Data, from response: HTTPURLResponse) -> Result {
+		let decoder = JSONDecoder()
+		decoder.dateDecodingStrategy = .iso8601
+		if response.isOK, let json = try? decoder.decode(RemoteImageCommentRootObject.self, from: data) {
+			return .success(json.items.toModels())
+		} else {
+			return .failure(.invalidData)
 		}
 	}
 }
