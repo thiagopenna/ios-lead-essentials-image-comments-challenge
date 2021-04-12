@@ -77,14 +77,14 @@ class ImageCommentPresenterTests: XCTestCase {
 			case display(isLoading: Bool)
 		}
 		
-		private(set) var messages = [Message]()
+		private(set) var messages = Set<Message>()
 		
 		func display(_ viewModel: ImageCommentErrorViewModel) {
-			messages.append(.display(errorMessage: viewModel.message))
+			messages.insert(.display(errorMessage: viewModel.message))
 		}
 		
 		func display(_ viewModel: ImageCommentLoadingViewModel) {
-			messages.append(.display(isLoading: viewModel.isLoading))
+			messages.insert(.display(isLoading: viewModel.isLoading))
 		}
 	}
 }
