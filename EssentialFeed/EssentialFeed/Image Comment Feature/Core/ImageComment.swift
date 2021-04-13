@@ -8,13 +8,24 @@
 
 import Foundation
 
-public struct ImageComment: Equatable {
+public struct ImageComment: Hashable {
 	public let id: UUID
 	public let message: String
 	public let creationDate: Date
 	public let author: Author
 	
-	public struct Author: Equatable {
+	public struct Author: Hashable {
 		public let username: String
+		
+		public init(username: String) {
+			self.username = username
+		}
+	}
+	
+	public init(id: UUID, message: String, creationDate: Date, author: Author) {
+		self.id = id
+		self.message = message
+		self.creationDate = creationDate
+		self.author = author
 	}
 }
