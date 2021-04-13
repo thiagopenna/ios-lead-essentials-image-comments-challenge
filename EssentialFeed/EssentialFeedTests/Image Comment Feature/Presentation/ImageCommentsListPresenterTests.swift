@@ -46,6 +46,13 @@ public final class ImageCommentsListPresenter {
 	private let loadingView: ImageCommentsListLoadingView
 	private let commentsView: ImageCommentsListView
 	
+	private var imageCommentsLoadError: String {
+		return NSLocalizedString("IMAGE_COMMENTS_VIEW_CONNECTION_ERROR",
+			 tableName: "ImageComments",
+			 bundle: Bundle(for: ImageCommentsListPresenter.self),
+			 comment: "Error message displayed when we can't load the image comments from the server")
+	}
+		
 	init(errorView: ImageCommentsListErrorView, loadingView: ImageCommentsListLoadingView, commentsView: ImageCommentsListView) {
 		self.errorView = errorView
 		self.loadingView = loadingView
@@ -64,7 +71,7 @@ public final class ImageCommentsListPresenter {
 	
 	public func didFinishLoadingComments(with error: Error) {
 		loadingView.display(ImageCommentsListLoadingViewModel(isLoading: false))
-		errorView.display(.error(message: "Error"))
+		errorView.display(.error(message: imageCommentsLoadError))
 	}
 }
 	
@@ -104,7 +111,7 @@ class ImageCommentsListPresenterTests: XCTestCase {
 		sut.didFinishLoadingComments(with: anyNSError())
 
 		XCTAssertEqual(view.messages, [
-			.display(errorMessage: "Error"),
+			.display(errorMessage: localized("IMAGE_COMMENTS_VIEW_CONNECTION_ERROR")),
 			.display(isLoading: false)
 		])
 	}
@@ -117,6 +124,16 @@ class ImageCommentsListPresenterTests: XCTestCase {
 		trackForMemoryLeaks(view)
 		trackForMemoryLeaks(sut)
 		return (sut, view)
+	}
+	
+	private func localized(_ key: String, file: StaticString = #filePath, line: UInt = #line) -> String {
+		let table = "ImageComments"
+		let bundle = Bundle(for: ImageCommentsListPresenter.self)
+		let value = bundle.localizedString(forKey: key, value: nil, table: table)
+		if value == key {
+			XCTFail("Missing localized string for key: \(key) in table: \(table)", file: file, line: line)
+		}
+		return value
 	}
 	
 	private class ViewSpy: ImageCommentsListErrorView, ImageCommentsListLoadingView, ImageCommentsListView {
