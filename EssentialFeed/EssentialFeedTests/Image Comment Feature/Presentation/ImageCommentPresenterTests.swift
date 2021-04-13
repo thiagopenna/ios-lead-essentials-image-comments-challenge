@@ -88,11 +88,8 @@ class ImageCommentPresenterTests: XCTestCase {
 	
 	func test_didFinishLoadingComments_displaysCommentsAndStopsLoading() {
 		let (sut, view) = makeSUT()
+		let (comments, _) = uniqueImageComments()
 		
-		let comment1 = ImageComment(id: UUID(), message: "A message", creationDate: Date(), author: ImageComment.Author(username: "An Author"))
-		let comment2 = ImageComment(id: UUID(), message: "Another message", creationDate: Date(), author: ImageComment.Author(username: "Another Author"))
-		let comments = [comment1, comment2]
-
 		sut.didFinishLoadingComments(with: comments)
 
 		XCTAssertEqual(view.messages, [
