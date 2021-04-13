@@ -1,5 +1,5 @@
 //
-//  ImageCommentPresenterTests.swift
+//  ImageCommentsListPresenterTests.swift
 //  EssentialImageCommentTests
 //
 //  Created by Thiago Penna on 12/04/21.
@@ -9,44 +9,44 @@
 import XCTest
 import EssentialFeed
 
-public protocol ImageCommentErrorView {
-	func display(_ viewModel: ImageCommentErrorViewModel)
+public protocol ImageCommentsListErrorView {
+	func display(_ viewModel: ImageCommentsListErrorViewModel)
 }
 
-public protocol ImageCommentLoadingView {
-	func display(_ viewModel: ImageCommentLoadingViewModel)
+public protocol ImageCommentsListLoadingView {
+	func display(_ viewModel: ImageCommentsListLoadingViewModel)
 }
 
-public protocol ImageCommentsView {
-	func display(_ viewModel: ImageCommentsViewModel)
+public protocol ImageCommentsListView {
+	func display(_ viewModel: ImageCommentsListViewModel)
 }
 
-public struct ImageCommentErrorViewModel {
+public struct ImageCommentsListErrorViewModel {
 	public let message: String?
 	
-	static var noError: ImageCommentErrorViewModel {
-		return ImageCommentErrorViewModel(message: nil)
+	static var noError: ImageCommentsListErrorViewModel {
+		return ImageCommentsListErrorViewModel(message: nil)
 	}
 	
-	static func error(message: String) -> ImageCommentErrorViewModel {
-		return ImageCommentErrorViewModel(message: message)
+	static func error(message: String) -> ImageCommentsListErrorViewModel {
+		return ImageCommentsListErrorViewModel(message: message)
 	}
 }
 
-public struct ImageCommentLoadingViewModel {
+public struct ImageCommentsListLoadingViewModel {
 	public let isLoading: Bool
 }
 
-public struct ImageCommentsViewModel {
+public struct ImageCommentsListViewModel {
 	public let comments: [ImageComment]
 }
 
-public final class ImageCommentPresenter {
-	private let errorView: ImageCommentErrorView
-	private let loadingView: ImageCommentLoadingView
-	private let commentsView: ImageCommentsView
+public final class ImageCommentsListPresenter {
+	private let errorView: ImageCommentsListErrorView
+	private let loadingView: ImageCommentsListLoadingView
+	private let commentsView: ImageCommentsListView
 	
-	init(errorView: ImageCommentErrorView, loadingView: ImageCommentLoadingView, commentsView: ImageCommentsView) {
+	init(errorView: ImageCommentsListErrorView, loadingView: ImageCommentsListLoadingView, commentsView: ImageCommentsListView) {
 		self.errorView = errorView
 		self.loadingView = loadingView
 		self.commentsView = commentsView
@@ -54,21 +54,21 @@ public final class ImageCommentPresenter {
 	
 	public func didStartLoadingComments() {
 		errorView.display(.noError)
-		loadingView.display(ImageCommentLoadingViewModel(isLoading: true))
+		loadingView.display(ImageCommentsListLoadingViewModel(isLoading: true))
 	}
 	
 	public func didFinishLoadingComments(with comments: [ImageComment]) {
-		loadingView.display(ImageCommentLoadingViewModel(isLoading: false))
-		commentsView.display(ImageCommentsViewModel(comments: comments))
+		loadingView.display(ImageCommentsListLoadingViewModel(isLoading: false))
+		commentsView.display(ImageCommentsListViewModel(comments: comments))
 	}
 	
 	public func didFinishLoadingComments(with error: Error) {
-		loadingView.display(ImageCommentLoadingViewModel(isLoading: false))
+		loadingView.display(ImageCommentsListLoadingViewModel(isLoading: false))
 		errorView.display(.error(message: "Error"))
 	}
 }
 	
-class ImageCommentPresenterTests: XCTestCase {
+class ImageCommentsListPresenterTests: XCTestCase {
 	func test_init_doesNotSendMessagesToView() {
 		let (_, view) = makeSUT()
 		
@@ -111,15 +111,15 @@ class ImageCommentPresenterTests: XCTestCase {
 	
 	// MARK: - Helpers
 	
-	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: ImageCommentPresenter, view: ViewSpy) {
+	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> (sut: ImageCommentsListPresenter, view: ViewSpy) {
 		let view = ViewSpy()
-		let sut = ImageCommentPresenter(errorView: view, loadingView: view, commentsView: view)
+		let sut = ImageCommentsListPresenter(errorView: view, loadingView: view, commentsView: view)
 		trackForMemoryLeaks(view)
 		trackForMemoryLeaks(sut)
 		return (sut, view)
 	}
 	
-	private class ViewSpy: ImageCommentErrorView, ImageCommentLoadingView, ImageCommentsView {
+	private class ViewSpy: ImageCommentsListErrorView, ImageCommentsListLoadingView, ImageCommentsListView {
 		enum Message: Hashable {
 			case display(errorMessage: String?)
 			case display(isLoading: Bool)
@@ -128,15 +128,15 @@ class ImageCommentPresenterTests: XCTestCase {
 		
 		private(set) var messages = Set<Message>()
 		
-		func display(_ viewModel: ImageCommentErrorViewModel) {
+		func display(_ viewModel: ImageCommentsListErrorViewModel) {
 			messages.insert(.display(errorMessage: viewModel.message))
 		}
 		
-		func display(_ viewModel: ImageCommentLoadingViewModel) {
+		func display(_ viewModel: ImageCommentsListLoadingViewModel) {
 			messages.insert(.display(isLoading: viewModel.isLoading))
 		}
 		
-		func display(_ viewModel: ImageCommentsViewModel) {
+		func display(_ viewModel: ImageCommentsListViewModel) {
 			messages.insert(.display(comments: viewModel.comments))
 		}
 		
