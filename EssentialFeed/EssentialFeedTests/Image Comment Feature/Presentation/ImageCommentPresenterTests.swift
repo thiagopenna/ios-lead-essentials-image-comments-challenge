@@ -27,6 +27,10 @@ public struct ImageCommentErrorViewModel {
 	static var noError: ImageCommentErrorViewModel {
 		return ImageCommentErrorViewModel(message: nil)
 	}
+	
+	static func error(message: String) -> ImageCommentErrorViewModel {
+		return ImageCommentErrorViewModel(message: message)
+	}
 }
 
 public struct ImageCommentLoadingViewModel {
@@ -56,6 +60,11 @@ public final class ImageCommentPresenter {
 	public func didFinishLoadingComments(with comments: [ImageComment]) {
 		loadingView.display(ImageCommentLoadingViewModel(isLoading: false))
 		commentsView.display(ImageCommentsViewModel(comments: comments))
+	}
+	
+	public func didFinishLoadingComments(with error: Error) {
+		loadingView.display(ImageCommentLoadingViewModel(isLoading: false))
+		errorView.display(.error(message: "Error"))
 	}
 }
 	
@@ -88,6 +97,17 @@ class ImageCommentPresenterTests: XCTestCase {
 
 		XCTAssertEqual(view.messages, [
 			.display(comments: comments),
+			.display(isLoading: false)
+		])
+	}
+	
+	func test_didFinishLoadingCommentsWithError_displaysErrorMessageAndStopsLoading() {
+		let (sut, view) = makeSUT()
+		
+		sut.didFinishLoadingComments(with: anyNSError())
+
+		XCTAssertEqual(view.messages, [
+			.display(errorMessage: "Error"),
 			.display(isLoading: false)
 		])
 	}
