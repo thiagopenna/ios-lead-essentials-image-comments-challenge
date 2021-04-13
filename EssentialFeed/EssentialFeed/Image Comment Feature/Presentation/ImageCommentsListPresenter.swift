@@ -20,10 +20,6 @@ public protocol ImageCommentsListView {
 	func display(_ viewModel: ImageCommentsListViewModel)
 }
 
-public struct ImageCommentsListLoadingViewModel {
-	public let isLoading: Bool
-}
-
 public struct ImageCommentsListViewModel {
 	public let comments: [ImageComment]
 }
