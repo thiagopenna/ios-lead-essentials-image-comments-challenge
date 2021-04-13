@@ -20,18 +20,6 @@ public protocol ImageCommentsListView {
 	func display(_ viewModel: ImageCommentsListViewModel)
 }
 
-public struct ImageCommentsListErrorViewModel {
-	public let message: String?
-	
-	static var noError: ImageCommentsListErrorViewModel {
-		return ImageCommentsListErrorViewModel(message: nil)
-	}
-	
-	static func error(message: String) -> ImageCommentsListErrorViewModel {
-		return ImageCommentsListErrorViewModel(message: message)
-	}
-}
-
 public struct ImageCommentsListLoadingViewModel {
 	public let isLoading: Bool
 }
