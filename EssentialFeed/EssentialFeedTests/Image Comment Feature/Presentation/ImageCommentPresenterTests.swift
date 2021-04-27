@@ -44,34 +44,24 @@ public final class ImageCommentPresenter {
 
 class ImageCommentPresenterTests: XCTestCase {
 	
-	func test_didLoad_displaysWithRecentMessage() {
+	func test_didLoad_displaysMultipleCommentsInOrder() {
 		let (sut, view) = makeSUT()
 		let now = Date().discardingMilliseconds
 		let oneSecondAgo = now.adding(seconds: -1)
-		let (comment, _) = makeComment(id: UUID(), message: "A message", creationDate: oneSecondAgo, authorUsername: "An Author")
-		
-		sut.didLoad(comment, referenceDate: now)
-		
-		XCTAssertEqual(view.messages.count, 1)
-		let message = view.messages.first
-		XCTAssertEqual(message?.message, "A message")
-		XCTAssertEqual(message?.creationDate, "1 second ago")
-		XCTAssertEqual(message?.authorUsername, "An Author")
-	}
-	
-	func test_didLoad_displaysWithOldMessage() {
-		let (sut, view) = makeSUT()
-		let now = Date().discardingMilliseconds
 		let oneWeekAgo = now.adding(days: -7)
-		let (comment, _) = makeComment(id: UUID(), message: "Another message", creationDate: oneWeekAgo, authorUsername: "Another Author")
+		let (comment1, _) = makeComment(id: UUID(), message: "A message", creationDate: oneSecondAgo, authorUsername: "An Author")
+		let (comment2, _) = makeComment(id: UUID(), message: "Another message", creationDate: oneWeekAgo, authorUsername: "Another Author")
 		
-		sut.didLoad(comment, referenceDate: now)
+		sut.didLoad(comment1, referenceDate: now)
+		sut.didLoad(comment2, referenceDate: now)
 		
-		XCTAssertEqual(view.messages.count, 1)
-		let message = view.messages.first
-		XCTAssertEqual(message?.message, "Another message")
-		XCTAssertEqual(message?.creationDate, "1 week ago")
-		XCTAssertEqual(message?.authorUsername, "Another Author")
+		XCTAssertEqual(view.messages.count, 2)
+		XCTAssertEqual(view.messages.first, ImageCommentViewModel(message: "A message",
+													  creationDate: "1 second ago",
+													  authorUsername: "An Author"))
+		XCTAssertEqual(view.messages.last, ImageCommentViewModel(message: "Another message",
+													  creationDate: "1 week ago",
+													  authorUsername: "Another Author"))
 	}
 	
 	// MARK: - Helpers
@@ -86,10 +76,10 @@ class ImageCommentPresenterTests: XCTestCase {
 	}
 	
 	private class ViewSpy: ImageCommentView {
-		private(set) var messages = Set<ImageCommentViewModel>()
+		private(set) var messages = [ImageCommentViewModel]()
 		
 		func display(_ model: ImageCommentViewModel) {
-			messages.insert(model)
+			messages.append(model)
 		}
 	}
 }
