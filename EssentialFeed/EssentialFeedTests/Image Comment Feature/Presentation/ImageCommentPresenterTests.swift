@@ -45,8 +45,7 @@ public final class ImageCommentPresenter {
 class ImageCommentPresenterTests: XCTestCase {
 	
 	func test_didLoad_displaysWithRecentMessage() {
-		let view = ViewSpy()
-		let sut = ImageCommentPresenter(view: view)
+		let (sut, view) = makeSUT()
 		let now = Date().discardingMilliseconds
 		let oneSecondAgo = now.adding(seconds: -1)
 		let (comment, _) = makeComment(id: UUID(), message: "A message", creationDate: oneSecondAgo, authorUsername: "An Author")
@@ -61,8 +60,7 @@ class ImageCommentPresenterTests: XCTestCase {
 	}
 	
 	func test_didLoad_displaysWithOldMessage() {
-		let view = ViewSpy()
-		let sut = ImageCommentPresenter(view: view)
+		let (sut, view) = makeSUT()
 		let now = Date().discardingMilliseconds
 		let oneWeekAgo = now.adding(days: -7)
 		let (comment, _) = makeComment(id: UUID(), message: "Another message", creationDate: oneWeekAgo, authorUsername: "Another Author")
@@ -77,6 +75,15 @@ class ImageCommentPresenterTests: XCTestCase {
 	}
 	
 	// MARK: - Helpers
+	
+	private func makeSUT(file: StaticString = #filePath,
+						 line: UInt = #line) -> (sut: ImageCommentPresenter, view: ViewSpy) {
+		let view = ViewSpy()
+		let sut = ImageCommentPresenter(view: view)
+		trackForMemoryLeaks(view, file: file, line: line)
+		trackForMemoryLeaks(sut, file: file, line: line)
+		return (sut, view)
+	}
 	
 	private class ViewSpy: ImageCommentView {
 		private(set) var messages = Set<ImageCommentViewModel>()
