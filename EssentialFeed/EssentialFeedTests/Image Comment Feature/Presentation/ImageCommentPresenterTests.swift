@@ -13,18 +13,6 @@ public protocol ImageCommentView {
 	func display(_ model: ImageCommentViewModel)
 }
 
-public struct ImageCommentViewModel: Hashable {
-	public let message: String
-	public let creationDate: String
-	public let authorUsername: String
-	
-	public init(message: String, creationDate: String, authorUsername: String) {
-		self.message = message
-		self.creationDate = creationDate
-		self.authorUsername = authorUsername
-	}
-}
-
 public final class ImageCommentPresenter {
 	private let view: ImageCommentView
 	
