@@ -96,6 +96,7 @@
 		AFE46AAC26262FDF005088F5 /* ImageCommentsListErrorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE46AAB26262FDF005088F5 /* ImageCommentsListErrorViewModel.swift */; };
 		AFE46AB226263013005088F5 /* ImageCommentsListLoadingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE46AB126263013005088F5 /* ImageCommentsListLoadingViewModel.swift */; };
 		AFE46AB82626303E005088F5 /* ImageCommentsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE46AB72626303D005088F5 /* ImageCommentsListViewModel.swift */; };
+		AFE46AC2262631A3005088F5 /* ImageCommentPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE46AC1262631A3005088F5 /* ImageCommentPresenterTests.swift */; };
 		AFF076632624D868002FFEBD /* ImageCommentsListPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF076622624D868002FFEBD /* ImageCommentsListPresenterTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -215,6 +216,7 @@
 		AFE46AAB26262FDF005088F5 /* ImageCommentsListErrorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCommentsListErrorViewModel.swift; sourceTree = "<group>"; };
 		AFE46AB126263013005088F5 /* ImageCommentsListLoadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCommentsListLoadingViewModel.swift; sourceTree = "<group>"; };
 		AFE46AB72626303D005088F5 /* ImageCommentsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCommentsListViewModel.swift; sourceTree = "<group>"; };
+		AFE46AC1262631A3005088F5 /* ImageCommentPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCommentPresenterTests.swift; sourceTree = "<group>"; };
 		AFF076622624D868002FFEBD /* ImageCommentsListPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCommentsListPresenterTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -638,6 +640,7 @@
 			isa = PBXGroup;
 			children = (
 				AFF076622624D868002FFEBD /* ImageCommentsListPresenterTests.swift */,
+				AFE46AC1262631A3005088F5 /* ImageCommentPresenterTests.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -904,6 +907,7 @@
 				08604500233E2294005ECD22 /* CoreDataFeedImageDataStoreTests.swift in Sources */,
 				087546942272387900542C32 /* XCTestCase+FailableDeleteFeedStoreSpecs.swift in Sources */,
 				08754690227237C900542C32 /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift in Sources */,
+				AFE46AC2262631A3005088F5 /* ImageCommentPresenterTests.swift in Sources */,
 				086BE481223270A3004CDC26 /* LoadFeedFromCacheUseCaseTests.swift in Sources */,
 				0875468C2272340500542C32 /* FeedStoreSpecs.swift in Sources */,
 				0844768F21FCB24E00439BE9 /* XCTestCase+MemoryLeakTracking.swift in Sources */,

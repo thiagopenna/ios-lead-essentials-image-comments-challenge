@@ -16,4 +16,12 @@ extension Date {
 	var discardingMilliseconds: Date {
 		return Date(timeIntervalSince1970: self.timeIntervalSince1970.rounded())
 	}
+	
+	func adding(seconds: Int) -> Date {
+		return Calendar(identifier: .gregorian).date(byAdding: .second, value: seconds, to: self)!
+	}
+	
+	func adding(days: Int) -> Date {
+		return Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
+	}
 }
