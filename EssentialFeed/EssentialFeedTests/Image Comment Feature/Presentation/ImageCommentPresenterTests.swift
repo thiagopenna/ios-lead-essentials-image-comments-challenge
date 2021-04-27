@@ -47,7 +47,7 @@ class ImageCommentPresenterTests: XCTestCase {
 	func test_didLoad_displaysWithRecentMessage() {
 		let view = ViewSpy()
 		let sut = ImageCommentPresenter(view: view)
-		let now = Date()
+		let now = Date().discardingMilliseconds
 		let oneSecondAgo = now.adding(seconds: -1)
 		let (comment, _) = makeComment(id: UUID(), message: "A message", creationDate: oneSecondAgo, authorUsername: "An Author")
 		
@@ -58,6 +58,22 @@ class ImageCommentPresenterTests: XCTestCase {
 		XCTAssertEqual(message?.message, "A message")
 		XCTAssertEqual(message?.creationDate, "1 second ago")
 		XCTAssertEqual(message?.authorUsername, "An Author")
+	}
+	
+	func test_didLoad_displaysWithOldMessage() {
+		let view = ViewSpy()
+		let sut = ImageCommentPresenter(view: view)
+		let now = Date().discardingMilliseconds
+		let oneWeekAgo = now.adding(days: -7)
+		let (comment, _) = makeComment(id: UUID(), message: "Another message", creationDate: oneWeekAgo, authorUsername: "Another Author")
+		
+		sut.didLoad(comment, referenceDate: now)
+		
+		XCTAssertEqual(view.messages.count, 1)
+		let message = view.messages.first
+		XCTAssertEqual(message?.message, "Another message")
+		XCTAssertEqual(message?.creationDate, "1 week ago")
+		XCTAssertEqual(message?.authorUsername, "Another Author")
 	}
 	
 	// MARK: - Helpers
