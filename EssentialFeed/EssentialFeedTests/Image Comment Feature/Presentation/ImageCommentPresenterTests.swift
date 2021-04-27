@@ -9,27 +9,6 @@
 import XCTest
 import EssentialFeed
 
-public protocol ImageCommentView {
-	func display(_ model: ImageCommentViewModel)
-}
-
-public final class ImageCommentPresenter {
-	private let view: ImageCommentView
-	
-	public init(view: ImageCommentView) {
-		self.view = view
-	}
-	
-	public func didLoad(_ comment: ImageComment, referenceDate: Date = Date()) {
-		let formatter = RelativeDateTimeFormatter()
-		let creationDateText = formatter.localizedString(for: comment.creationDate, relativeTo: referenceDate)
-		
-		view.display(ImageCommentViewModel(message: comment.message,
-										   creationDate: creationDateText,
-										   authorUsername: comment.author.username))
-	}
-}
-
 class ImageCommentPresenterTests: XCTestCase {
 	
 	func test_didLoad_displaysMultipleCommentsInOrder() {
